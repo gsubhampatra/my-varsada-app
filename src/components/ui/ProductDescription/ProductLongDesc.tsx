@@ -1,3 +1,4 @@
+// ProductLongDesc.tsx
 import { GColors } from "@/src/constants/GStyles";
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";

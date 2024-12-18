@@ -9,12 +9,14 @@ const Index = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <View style={indexStyle.container}>
-        <Redirect href="/login" />
         <Link style={indexStyle.button} href="/login">
           Login
         </Link>
         <Link style={indexStyle.button} href="/home">
           Home
+        </Link>
+        <Link style={indexStyle.button} href="/product">
+          Product
         </Link>
       </View>
     </QueryClientProvider>

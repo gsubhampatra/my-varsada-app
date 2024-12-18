@@ -1,3 +1,4 @@
+// ProductColor.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useProductStore } from '../../../store/useStore';
@@ -59,5 +60,3 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
 });
-
-

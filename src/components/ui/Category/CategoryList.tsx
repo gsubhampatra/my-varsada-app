@@ -1,3 +1,6 @@
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+
 export default function CategoryList({
   categories,
 }: {
@@ -7,17 +10,37 @@ export default function CategoryList({
   }[];
 }) {
   return (
-    <div className="flex flex-col">
-      <div className="w-[100%-16px] overflow-hidden rounded-md bg-white mb-4 ml-4">
-        {categories.map((category, index) => (
-          <button
-            className={`text-start font-semibold text-lg p-2 px-4 pl-6 w-full ${index + (1 % 2) == 0 ? 'bg-white' : 'bg-gray-100'}`}
-            key={index}
-          >
-            {category.category_name}
-          </button>
-        ))}
-      </div>
-    </div>
+    <View style={styles.container}>
+      {categories.map((category, index) => (
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F5F5F5",
+            },
+          ]}
+          key={index}
+        >
+          <Text style={styles.buttonText}>{category.category_name}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  button: {
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontFamily: "Arial",
+    fontWeight: "600",
+  },
+});

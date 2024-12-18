@@ -1,23 +1,8 @@
+// ProductCard1.tsx
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { Heart } from "../../../assets/icons";
-import api from "../../../http/axiosconfig";
-import { API_ROUTES } from "../../../kv";
-import { useMutation } from "@tanstack/react-query";
-import useAsyncStorageList from "../../../hooks/localStoragehooks";
-
-export async function addToDreamList(productId: number) {
-  const res = await api.post(API_ROUTES.USER.ADD_TO_DREAM_LIST, { productId });
-  return res.data;
-}
-
-export async function removeFromDreamList(productId: number) {
-  const res = await api.post(API_ROUTES.USER.REMOVE_FROM_DREAM_LIST, {
-    productId,
-  });
-  return res.data;
-}
 
 type ProductCardProps = {
   img: string;
@@ -27,52 +12,24 @@ type ProductCardProps = {
   discount?: number;
 };
 
-export default function ProductCard1({
+const ProductCard1: React.FC<ProductCardProps> = ({
   img,
   productId,
   price,
   product_name,
   discount,
-}: ProductCardProps) {
-  const { list, addProduct, removeProduct } = useAsyncStorageList("dreamList");
-
-  const addMutation = useMutation(addToDreamList, {
-    onSuccess: () => {
-      addProduct(productId.toString());
-    },
-  });
-
-  const removeMutation = useMutation(removeFromDreamList, {
-    onSuccess: () => {
-      removeProduct(productId.toString());
-    },
-  });
-
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.badgeContainer}>
         {discount ? (
           <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>45% off</Text>
+            <Text style={styles.discountText}>{discount}% off</Text>
           </View>
         ) : null}
-        {list.includes(productId.toString()) ? (
-          <TouchableOpacity
-            style={styles.heartButton}
-            onPress={() =>
-              removeMutation.mutate(parseInt(productId.toString()))
-            }
-          >
-            <Heart fill={true} />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.heartButton}
-            onPress={() => addMutation.mutate(parseInt(productId.toString()))}
-          >
-            <Heart fill={false} />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.heartButton}>
+          <Heart fill={false} />
+        </TouchableOpacity>
       </View>
       <Link href={`/product?productId=${productId}`}>
         <View style={styles.imageContainer}>
@@ -84,18 +41,21 @@ export default function ProductCard1({
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.productName}>{product_name}</Text>
+          {discount && <Text style={styles.discount}>Rs {price}</Text>}
           <Text style={styles.price}>Rs {price}</Text>
         </View>
       </Link>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     cursor: "pointer",
-    width: "100%",
+      width: "48%",
+      marginBottom: 10,
+    height: 200,
   },
   badgeContainer: {
     position: "absolute",
@@ -126,13 +86,12 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   imageContainer: {
-    height: 150,
+    height: 200,
     overflow: "hidden",
-    aspectRatio: 1 / 1.5,
   },
   image: {
     width: "100%",
-    height: "100%",
+    height: 200,
     resizeMode: "cover",
   },
   textContainer: {
@@ -151,4 +110,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
+    discount: {
+    fontSize: 12,
+        textDecorationLine: 'line-through'
+    }
 });
+export default ProductCard1;

@@ -3,7 +3,7 @@
 // export const createCategory: URL = new URL(`${base}/api/createcategory`);
 // export const getCategory: URL = new URL(`${base}/api/getallcategory`);
 
-const BASE_URL = `${process.env.VITE_API_URL}`;
+const BASE_URL = `${process.env.EXPO_PUBLIC_API_URL}`;
 // const BASE_URL = 'http://192.168.29.226:3000';
 
 // Define the API routes in a structured way

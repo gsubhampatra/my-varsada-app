@@ -1,42 +1,71 @@
+// SimilarProduct.tsx
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 
-import { useMutation } from "@tanstack/react-query";
-import api from "../../../http/axiosconfig";
-import { API_ROUTES } from "../../../kv";
 import { ProductWithImageData } from "../../../types/ResponceTypes";
+
 
 interface SimilarProductData {
   similar: ProductWithImageData[];
 }
 
-// async function getSimilarProducts(
-//   productId: string
-// ): Promise<SimilarProductData> {
-//   const response = await api.post(API_ROUTES.FILTER.SIMILAR, {
-//     productId: parseInt(productId),
-//   });
-//   return response.data;
-// }
 
+const sampleSimilarProducts: SimilarProductData = {
+    similar: [
+        {
+            id: 1,
+            product_name: "Product 1",
+            price: "1000",
+            ProductColor: [
+                {
+                   medias: [ {
+                        url: "https://i.pinimg.com/564x/a6/60/b9/a660b96060154e684a1b9c08aa4b33b2.jpg"
+                    }]
+                }
+            ]
+        },
+        {
+            id: 2,
+            product_name: "Product 2",
+            price: "1200",
+            ProductColor: [
+                {
+                    medias: [ {
+                        url: "https://i.pinimg.com/564x/f6/a0/1c/f6a01c1a48bbdf78121c26221528dd8e.jpg"
+                    }]
+                }
+            ]
+        },
+        {
+            id: 3,
+            product_name: "Product 3",
+            price: "900",
+              ProductColor: [
+                {
+                    medias: [ {
+                        url: "https://i.pinimg.com/564x/5a/c0/58/5ac0586e2a014e451d4c8949a628c8d0.jpg"
+                    }]
+                }
+            ]
+        },
+         {
+            id: 4,
+            product_name: "Product 4",
+            price: "1100",
+              ProductColor: [
+                {
+                    medias: [ {
+                        url: "https://i.pinimg.com/564x/d6/3f/d5/d63fd5c208a0d487b34ab648a154d717.jpg"
+                    }]
+                }
+            ]
+        },
+
+    ]
+}
 export default function SimilarProduct({ productId }: { productId: string }) {
-  const [SimilarProduct, setSimilarProduct] = useState<ProductWithImageData[]>(
-    []
-  );
+  const [SimilarProduct, setSimilarProduct] = useState<ProductWithImageData[]>(sampleSimilarProducts.similar);
 
-  // const mutation = useMutation(getSimilarProducts, {
-  //   onSuccess: (data) => {
-  //     console.log(data);
-  //     setSimilarProduct(data.similar);
-  //   },
-  //   onError: (error) => {
-  //     console.error(error);
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   mutation.mutate(productId);
-  // }, [productId]);
 
   if (SimilarProduct)
     return (

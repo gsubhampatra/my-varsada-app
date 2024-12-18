@@ -1,3 +1,4 @@
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,20 +8,20 @@ import {
   SafeAreaView,
   TextInput,
   Linking,
-} from "react-native";
-import { useState } from "react";
-import { useUserStore } from "../../store/useStore";
-import { API_ROUTES } from "../../kv";
-import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import api from "../../http/axiosconfig";
-import { GoogleIcon } from "../../assets/icons";
+    Alert
+} from 'react-native';
+import { useUserStore } from '../../store/useStore';
+import { API_ROUTES } from '../../kv';
+import { useNavigation } from '@react-navigation/native';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import api from '../../http/axiosconfig';
+import { GoogleIcon } from '../../assets/icons';
 
 type MeData = {
   status: boolean;
   user: {
     uid: string;
-    uid_type: "EMAIL" | "PHONE";
+    uid_type: 'EMAIL' | 'PHONE';
   };
 };
 
@@ -41,84 +42,91 @@ async function postVerifyOtp(payload: { uid: string; otp: string }) {
 
 export default function Login() {
   const { setIsLogedIn, isLoginSkipped, setIsLoginSkipped } = useUserStore();
-  const [input, setInput] = useState<string>();
-  const [inputOtp, setInputOtp] = useState<string>();
+  const [input, setInput] = useState<string>('');
+  const [inputOtp, setInputOtp] = useState<string>('');
   const navigation = useNavigation();
 
-  const handelInput = (e: string) => {
-    // setInput(e);
-  };
+  const handelInput = useCallback((text: string) => {
+    setInput(text);
+  }, []);
 
-  const handelInputOtp = (e: string) => {
-    // setInputOtp(e);
-  };
+    const handelInputOtp = useCallback((text: string) => {
+    setInputOtp(text);
+  }, []);
 
-  // const otpMutation = useMutation(postOtup, {
-  //   onSuccess: (data) => {
-  //     console.log(data);
-  //   },
-  //   onError: (err) => {
-  //     console.error("Error getting OTP:", err);
-  //   },
-  // });
 
-  // const verifyOtpMutation = useMutation(postVerifyOtp, {
-  //   onSuccess: (data) => {
-  //     console.log(data);
-  //     if (data.status) {
-  //       if (data.signup) {
-  //         console.log(data.signup);
-  //         navigation.navigate("signup");
-  //       } else {
-  //         setIsLogedIn(true);
-  //         navigation.navigate("/");
-  //       }
-  //     }
-  //   },
-  //   onError: (err) => {
-  //     console.error("Error getting OTP:", err);
-  //   },
-  // });
+  const otpMutation = useMutation(postOtup, {
+    onSuccess: (data) => {
+      console.log(data);
+       Alert.alert("OTP Sent");
+    },
+    onError: (err) => {
+        Alert.alert("Error", `Error getting OTP: ${err}`);
+        console.error('Error getting OTP:', err);
+    },
+  });
+
+  const verifyOtpMutation = useMutation(postVerifyOtp, {
+        onSuccess: (data) => {
+        console.log(data);
+         if (data.status) {
+           if (data.signup) {
+              console.log(data.signup);
+               navigation.navigate('signup');
+            } else {
+              setIsLogedIn(true);
+              navigation.navigate('/');
+           }
+        }
+     },
+    onError: (err) => {
+       Alert.alert("Error",`Error getting OTP: ${err}`);
+      console.error('Error getting OTP:', err);
+    },
+  });
 
   const getOtp = async () => {
-    // if (!input) {
-    //   return alert("Empty Input: give email or phone");
-    // }
-    // const payload = {
-    //   uid: input,
-    // };
-    // otpMutation.mutate(payload);
+     if (!input) {
+       Alert.alert("Error","Empty Input: give email or phone");
+       return;
+     }
+        const payload = {
+            uid: input,
+        };
+    otpMutation.mutate(payload);
   };
 
   const verifyOtp = async () => {
-    // if (!input || !inputOtp) {
-    //   return alert("Empty Inputs");
-    // }
-    // const payload = {
-    //   uid: input,
-    //   otp: inputOtp,
-    // };
+   if (!input || !inputOtp) {
+        Alert.alert("Error","Empty Inputs");
+      return;
+        }
+    const payload = {
+      uid: input,
+      otp: inputOtp,
+    };
 
-    // verifyOtpMutation.mutate(payload);
+     verifyOtpMutation.mutate(payload);
   };
 
-  // const { data } = useQuery({
-  //   queryKey: ["me"],
-  //   queryFn: fetchMe,
-  //   refetchOnWindowFocus: false,
-  // });
+  const { data } = useQuery({
+    queryKey: ['me'],
+    queryFn: fetchMe,
+    refetchOnWindowFocus: false,
+  });
 
-  // if (data?.status) {
-  //   navigation.navigate("/signup");
-  //   setIsLogedIn(true);
-  // }
+
+   if (data?.status) {
+        navigation.navigate('/signup');
+        setIsLogedIn(true);
+    }
+
 
   return (
     <SafeAreaView>
       <View>
         <Image
-          source={require("../../assets/images/ban1.png")}
-          alt="banner"
+          source={require('../../assets/images/ban1.png')}
           style={styles.banner}
         />
         <View style={styles.container}>
@@ -128,7 +136,7 @@ export default function Login() {
           <View style={styles.inputContainer}>
             <Text>Enter email or phone</Text>
             <TextInput
-              style={styles.input}
+                style={styles.input}
               value={input}
               onChangeText={handelInput}
               placeholder="Enter Email or Phone"
@@ -158,13 +166,14 @@ export default function Login() {
               style={styles.skipButton}
               onPress={() => {
                 setIsLoginSkipped(!isLoginSkipped);
+                  navigation.navigate("/");
               }}
             >
               <Text style={styles.skipButtonText}>Skip</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.socialButtonContainer}>
-            <TouchableOpacity
+           <TouchableOpacity
               style={styles.googleButton}
               onPress={() => Linking.openURL(API_ROUTES.AUTH.GOOGLE)}
             >
@@ -178,91 +187,91 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  banner: {
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    banner: {
+        height: '100%',
+        width: '100%',
+        resizeMode: 'cover',
+    },
+    container: {
+        flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
-  heading: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
+    heading: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+        fontSize: 24,
+        fontWeight: 'bold',
   },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginBottom: 10,
-  },
-  otpContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  otpInput: {
-    flex: 1,
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginRight: 10,
-  },
-  getOtpButton: {
-    backgroundColor: "#007aff",
-    borderRadius: 5,
-    padding: 10,
-  },
-  getOtpButtonText: {
-    color: "white",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
+    inputContainer: {
+        marginBottom: 20,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        marginBottom: 10,
+    },
+   otpContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    otpInput: {
+        flex: 1,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+      paddingHorizontal: 10,
+        paddingVertical: 10,
+        marginRight: 10,
+    },
+    getOtpButton: {
+        backgroundColor: '#007aff',
+        borderRadius: 5,
+       padding: 10,
+    },
+     getOtpButtonText: {
+        color: 'white',
+    },
+   buttonContainer: {
+       flexDirection: 'row',
+        justifyContent: 'space-between',
+    alignItems: 'center',
+       marginBottom: 20,
+    },
   loginButton: {
-    backgroundColor: "#007aff",
-    borderRadius: 5,
-    padding: 10,
-  },
+        backgroundColor: '#007aff',
+       borderRadius: 5,
+        padding: 10,
+    },
   loginButtonText: {
-    color: "white",
+        color: 'white',
+    },
+   skipButton: {
+        backgroundColor: '#e6e6e6',
+       borderRadius: 5,
+      padding: 10,
   },
-  skipButton: {
-    backgroundColor: "#e6e6e6",
-    borderRadius: 5,
-    padding: 10,
-  },
-  skipButtonText: {
-    color: "#007aff",
-  },
-  socialButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  googleButton: {
-    backgroundColor: "white",
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-  },
+   skipButtonText: {
+       color: '#007aff',
+    },
+     socialButtonContainer: {
+        flexDirection: 'row',
+         justifyContent: 'center',
+       alignItems: 'center',
+    },
+   googleButton: {
+       backgroundColor: 'white',
+        borderColor: 'gray',
+       borderWidth: 1,
+        borderRadius: 5,
+       padding: 10,
+        marginRight: 10,
+    },
 });

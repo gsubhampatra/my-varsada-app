@@ -1,3 +1,4 @@
+// ProductSizeBox.tsx
 import { VarsadaBagPayload } from '@/src/types/productTypes';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
@@ -32,31 +33,30 @@ export default function ProductSizeBox({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  button: {
-    width: 48,
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selected: {
-    backgroundColor: '#333',
-    borderColor: '#333',
-  },
-  selectedText: {
-    color: '#fff',
-  },
-  text: {
-    fontSize: 16,
-    color: '#333',
-  },
+    container: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginTop: 16,
+    },
+    button: {
+        width: 48,
+        height: 48,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    selected: {
+        backgroundColor: '#333',
+        borderColor: '#333',
+    },
+    selectedText: {
+        color: '#fff',
+    },
+    text: {
+        fontSize: 16,
+        color: '#333',
+    },
 });
-

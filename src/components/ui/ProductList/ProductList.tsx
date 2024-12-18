@@ -1,3 +1,5 @@
+import React from 'react';
+import { View, FlatList, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import api from '../../../http/axiosconfig';
 import { API_ROUTES } from '../../../kv';
@@ -6,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { ProductWithImageData } from '../../../types/ResponceTypes';
 import { useProductFilter } from '../../../context/ProductFiltersContext';
 import { Filter as FilterType } from '../../../types/productTypes';
-import { Alert, Skeleton } from 'antd';
 
 type Prop = {
   isShowFilters: boolean;
@@ -38,13 +39,31 @@ async function fetchProductList({
 }
 
 export default function ProductList({ isShowFilters, searchString }: Prop) {
-  const [products, setProducts] = useState<ProductWithImageData[]>();
+  const [products, setProducts] = useState<ProductWithImageData[]>([
+    {
+      id: 1,
+      price: 1000,
+      product_name: 'Product 1',
+      ProductColor: [{ medias: [{ url: 'https://picsum.photos/200' }] }],
+    },
+    {
+      id: 2,
+      price: 2000,
+      product_name: 'Product 2',
+      ProductColor: [{ medias: [{ url: 'https://picsum.photos/201' }] }],
+    },
+    {
+      id: 3,
+      price: 3000,
+      product_name: 'Product 3',
+      ProductColor: [{ medias: [{ url: 'https://picsum.photos/202' }] }],
+    },
+  ]);
   const { productFilters } = useProductFilter();
   const [isLoading, setIsLoading] = useState(true);
 
   const mutation = useMutation(fetchProductList, {
     onSuccess: (data) => {
-      console.log(data);
       setProducts(data?.products);
       setIsLoading(false);
     },
@@ -60,46 +79,48 @@ export default function ProductList({ isShowFilters, searchString }: Prop) {
 
   if (!isLoading && products?.length == 0)
     return (
-      <div className="flex justify-center items-center">
-        <Alert type="error" showIcon message="No Products Found" />
-      </div>
+      <View style={styles.container}>
+        <Text style={styles.text}>No Products Found</Text>
+      </View>
     );
 
   if (products)
     return (
-      <div
-        className={`grid ${isShowFilters ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}
-      >
-        {isLoading ? (
-          <>
-            <Skeleton.Node
-              active={true}
-              style={{ width: '100%', height: 300 }}
-            />
-            <Skeleton.Node
-              active={true}
-              style={{ width: '100%', height: 300 }}
-            />
-            <Skeleton.Node
-              active={true}
-              style={{ width: '100%', height: 300 }}
-            />
-            <Skeleton.Node
-              active={true}
-              style={{ width: '100%', height: 300 }}
-            />
-          </>
-        ) : (
-          products?.map((product) => (
-            <ProductCard1
-              key={product.id}
-              img={product?.ProductColor[0]?.medias[0]?.url}
-              productId={product.id}
-              price={product.price}
-              product_name={product.product_name}
-            />
-          ))
+      <FlatList
+        data={products}
+        renderItem={({ item }) => (
+          <ProductCard1
+            key={item.id}
+            img={item?.ProductColor[0]?.medias[0]?.url}
+            productId={item.id}
+            price={item.price}
+            product_name={item.product_name}
+          />
         )}
-      </div>
+        ListEmptyComponent={
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color="#00ff00" />
+          </View>
+        }
+        contentContainerStyle={styles.contentContainerStyle}
+      />
     );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  contentContainerStyle: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+});
+
+

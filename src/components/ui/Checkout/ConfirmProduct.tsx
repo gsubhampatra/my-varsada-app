@@ -1,5 +1,5 @@
-import ProductSelect from './ProductSelect';
-import { useState } from 'react';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import api from '../../../http/axiosconfig';
 import { API_ROUTES } from '../../../kv';
 import {
@@ -33,8 +33,8 @@ async function postCheckout(
 }
 
 export default function ConfirmProduct() {
-  const [loading, setLoading] = useState(false);
-  const [iframeUrl, setIframeUrl] = useState<string>();
+  const [loading, setLoading] = React.useState(false);
+  const [iframeUrl, setIframeUrl] = React.useState<string>();
   const { checkoutCalculate } = useCheckoutCalculateStore();
   const { selectedBagIdsStore } = useBagStore();
   const { coupon, isCoinRedeemed } = useCouponBoxStore();
@@ -61,9 +61,7 @@ export default function ConfirmProduct() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     setLoading(true);
 
     // this is made static for now, but later fetch from databse
@@ -78,50 +76,65 @@ export default function ConfirmProduct() {
     mutation.mutate(data);
   };
 
-  if (iframeUrl) window.location.href = iframeUrl;
+  if (iframeUrl) {
+    Linking.openURL(iframeUrl);
+  }
 
   return (
     <>
       {contextHolder}
-      <div className="grid grid-cols-2 gap-11">
-        <ProductSelect />
-        <div className="flex flex-col gap-4">
+      <View style={styles.container}>
+        <View style={styles.left}>
+          <ProductSelect />
+        </View>
+        <View style={styles.right}>
           <CouponBox />
           {checkoutCalculate && selectedBagIdsStore.length > 0 ? (
             <>
               <CheckoutCalculated checkoutCalculate={checkoutCalculate} />
 
-              <button
-                type="submit"
+              <TouchableOpacity
+                onPress={handleSubmit}
+                style={styles.button}
                 disabled={loading}
-                onClick={handleSubmit}
-                className="bg-secondary rounded-md p-3 text-white"
               >
-                checkout
-              </button>
+                {loading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.buttonText}>Checkout</Text>
+                )}
+              </TouchableOpacity>
             </>
           ) : null}
-        </div>
-
-        {/* model kind of.. */}
-        {/* {iframeUrl && (
-          <>
-            <div
-              className="overlay"
-              onClick={() => {
-                setIframeUrl('');
-              }}
-            >
-              <iframe
-                className="iframe-container"
-                src={iframeUrl}
-                style={{ border: 'none' }}
-                title="Content Frame"
-              />
-            </div>
-          </>
-        )} */}
-      </div>
+        </View>
+      </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+  },
+  left: {
+    flex: 1,
+  },
+  right: {
+    flex: 1,
+  },
+  button: {
+    backgroundColor: '#1890ff',
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+});
+

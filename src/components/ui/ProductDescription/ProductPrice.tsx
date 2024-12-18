@@ -1,14 +1,25 @@
+// ProductPrice.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { PurpleHeartIcon, PurpleShareIcon } from '../../../assets/icons';
 import useLocalStorageList from '../../../hooks/localStoragehooks';
-import { addToDreamList, removeFromDreamList } from '../Product/ProductCard1';
 import { useMutation } from '@tanstack/react-query';
 
 interface prop {
   price?: number;
   productId: number;
 }
+// Placeholder functions for mutations since there's no API
+export async function addToDreamList(productId: number) {
+    console.log(`Added to dream list: ${productId}`);
+    return { status: true }
+  }
+  
+  export async function removeFromDreamList(productId: number) {
+      console.log(`Removed from dream list: ${productId}`);
+    return {status: true}
+  }
+
 
 export default function ProductPrice({ price, productId }: prop) {
   const { list, addProduct, removeProduct } = useLocalStorageList('dreamList');
@@ -81,4 +92,3 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 });
-

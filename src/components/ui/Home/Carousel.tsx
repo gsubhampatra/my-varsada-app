@@ -1,3 +1,7 @@
+import { GColors } from "@/src/constants/GStyles";
+import api from "@/src/http/axiosconfig";
+import { API_ROUTES } from "@/src/kv";
+import { useQuery } from "@tanstack/react-query";
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -6,6 +10,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 
 interface Slide {
@@ -18,11 +23,27 @@ interface Slide {
   link: string;
 }
 
-interface CarouselProps {
-  slides: Slide[];
-  interval?: number;
+
+
+interface BannerData {
+  status: boolean;
+  banners: {
+    banner_name: string;
+    top_text: string;
+    bottom_text: string;
+    button_text: string;
+    mediaUrl: string;
+    mediaType: string;
+    link: string;
+    position: string;
+  }[];
 }
 
+async function fetchSlides(): Promise<BannerData> {
+  const res = await api.get(API_ROUTES.BANNER.GET);
+  if (!res.status) throw new Error("Failed to load banners");
+  return res.data;
+}
 const slidesdata = [
   {
     image:
@@ -72,11 +93,55 @@ const sortSlides = (slides: Slide[]) => {
 
 const { width } = Dimensions.get("window"); // Get screen width
 
-const Carousel = ({ interval = 3000 }) => {
+const Carousel = () => {
+  const interval = 5000;
+  const [slides, setSlides] = useState<Slide[] | null>(null);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const slideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const slides = sortSlides(slidesdata);
+  const { isLoading, error, data } = useQuery<BannerData>({
+    queryKey: ["slides"],
+    queryFn: fetchSlides,
+  });
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error loading slides</Text>
+      </View>
+    );
+    
+  }
+
+  if (data?.banners) {
+    const slidesData = data.banners.map((slide) => {
+      return {
+        image: slide.mediaUrl,
+        heading: slide.banner_name,
+        top_text: slide.top_text,
+        bottom_text: slide.bottom_text,
+        button_text: slide.button_text,
+        link: slide.link,
+        position: slide.position as "start" | "center" | "end",
+      };
+    });
+    setSlides(sortSlides(slidesData));
+  }
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#C473FF" />
+      </View>
+    );
+  }
+  if (!slides) {
+    return (
+      <View style={styles.container}>
+        <Text>No slides</Text>
+      </View>
+    );
+  }
 
   const nextSlide = () => {
     setCurrentSlide((prevSlide) =>
@@ -221,6 +286,10 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     backgroundColor: "white",
+  },
+  noSlides: {
+    fontSize: 16,
+    color: GColors.grey,
   },
 });
 

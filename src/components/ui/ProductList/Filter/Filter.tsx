@@ -1,4 +1,5 @@
-import { Divider } from 'antd';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import FilterCategory from './FilterCategory';
 import FilterPrice from './FilterPrice';
 import FilterColor from './FilterColor';
@@ -6,26 +7,35 @@ import FilterSize from './FilterSize';
 // import FilterStyle from './FilterStyle';
 import { useProductFilter } from '../../../../context/ProductFiltersContext';
 
+const styles = StyleSheet.create({
+  divider: {
+    borderBottomColor: '#E5E5EA',
+    borderBottomWidth: 1,
+    marginVertical: 16,
+  },
+});
+
 export default function Filter() {
   const { setProductFilters, productFilters } = useProductFilter();
   return (
-    <div className="">
-      <Divider />
+    <View>
+      <View style={styles.divider} />
       <FilterCategory />
-      <Divider />
+      <View style={styles.divider} />
       <FilterPrice setFilters={setProductFilters} />
-      <Divider />
+      <View style={styles.divider} />
       <FilterColor
         setFilters={setProductFilters}
         ColorFilter={productFilters?.color}
       />
-      <Divider />
+      <View style={styles.divider} />
       <FilterSize
         setFilters={setProductFilters}
         Sizefilter={productFilters?.size}
       />
-      {/* <Divider />
+      {/* <View style={styles.divider} />
       <FilterStyle /> */}
-    </div>
+    </View>
   );
 }
+

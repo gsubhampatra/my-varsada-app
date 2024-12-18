@@ -11,6 +11,7 @@ function TabLayout() {
       }}
       tabBar={TabBar}
     >
+      
       <Tabs.Screen name="home" />
       <Tabs.Screen name="category" />
       <Tabs.Screen name="checkout" />

@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../http/axiosconfig';
 import { API_ROUTES } from '../../../kv';
 import { ProductWithImageData } from '../../../types/ResponceTypes';
 import { useCategoryTypeStore } from '../../../store/useStore';
-import { Divider } from 'antd';
 import FilterPrice from '../ProductList/Filter/FilterPrice';
 import FilterColor from '../ProductList/Filter/FilterColor';
 import FilterSize from '../ProductList/Filter/FilterSize';
 import { useCategoryFilter } from '../../../context/CategoryFiltersContext';
+import { useFocusEffect } from 'expo-router';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface categoryTypeProductData {
   status: string;
@@ -75,11 +76,8 @@ export default function SideNav({
   const { setProductForCategoryType, setIsLoading } = useCategoryTypeStore();
   const { setCategoryFilters, categoryFilters } = useCategoryFilter();
 
-  // const toggleCategoryList = (id: string) => {
-  //   setSelectedCategoryTypeId((prev) => (prev === id ? null : id));
-  // };
 
-  const { isLoading } = useQuery<categoryTypeProductData>({
+  const { isLoading, data,error } = useQuery<categoryTypeProductData>({
     queryKey: ['categoryProducts', selectedCategoryTypeId, categoryFilters],
     queryFn: () =>
       getCategoryProducts(
@@ -90,82 +88,88 @@ export default function SideNav({
         categoryFilters?.max_price,
         categoryFilters?.sort
       ),
-    onSuccess: (data) => {
-      console.log(data.categoryType);
-      const productArr: ProductWithImageData[] = data.categoryType
-        .flatMap((categoryType) => categoryType.categories)
-        .flatMap((category) => category.products)
-        .map((product) => ({
-          id: product.id,
-          product_name: product.product_name,
-          price: product.price,
-          ProductColor: product.ProductColor.map((color) => ({
-            medias: color.medias.map((media) => ({
-              url: media.url,
-            })),
-          })),
-        }));
-      console.log(productArr);
-      setProductForCategoryType(productArr);
-      setIsLoading(false);
-    },
-  });
-
-  useEffect(() => {
-    if (isLoading) {
-      setProductForCategoryType([]);
-      setIsLoading(true);
     }
-  }, [isLoading]);
+  )
+  if (data) {
+    console.log(data.categoryType);
+    const productArr: ProductWithImageData[] = data.categoryType
+      .flatMap((categoryType) => categoryType.categories)
+      .flatMap((category) => category.products)
+      .map((product) => ({
+        id: product.id,
+        product_name: product.product_name,
+        price: product.price,
+        ProductColor: product.ProductColor.map((color) => ({
+          medias: color.medias.map((media) => ({
+            url: media.url,
+          })),
+        })),
+      }));
+    console.log(productArr);
+    setProductForCategoryType(productArr);
+    setIsLoading(false);
+  
+  }
+  useFocusEffect(
+    React.useCallback(() => {
+      if (isLoading) {
+        setProductForCategoryType([]);
+        setIsLoading(true);
+      }
+    }, [isLoading])
+  );
+
 
   return (
-    <div className="flex flex-col gap-4 overflow-hidden">
-      <h4 className="font-bold text-xl flex gap-4">
-        Category{isLoading ? '...' : null}
-      </h4>
-      <div className="flex flex-col">
-        {categoryType.map((category) => (
-          <div className="w-full" key={category.id}>
-            <button
-              className={`text-start font-semibold text-lg p-2 px-4 flex justify-between items-center w-full rounded-md
-                ${selectedCategoryTypeId === category.id.toString() ? ' bg-purple-200 ' : ''}
-                `}
-              onClick={() => setSelectedCategoryTypeId(category.id.toString())}
-            >
-              {category.type_name}
-              {/* <span
-                className={`transform transition-transform duration-300 ${
-                  selectedCategoryTypeId === category.id.toString()
-                    ? 'rotate-90'
-                    : ''
-                }`}
+    <View style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
+        Category {isLoading ? '...' : null}
+      </Text>
+      <FlatList
+        data={categoryType}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => setSelectedCategoryTypeId(item.id.toString())}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: 16,
+              backgroundColor:
+                selectedCategoryTypeId === item.id.toString()
+                  ? '#e6e6e6'
+                  : '#fff',
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>{item.type_name}</Text>
+            {/* <Text style={{ fontSize: 16, transform: [{ rotate: '90deg' }] }}>
               >
-                &gt;
-              </span> */}
-            </button>
-            {/* {selectedCategoryTypeId === category.id.toString() && (
-              <div className="pl-8">
-                <CategoryList categories={category.categories} />
-              </div>
-            )} */}
-          </div>
-        ))}
-      </div>
+            </Text> */}
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+      {/* {selectedCategoryTypeId && (
+        <View style={{ paddingLeft: 16 }}>
+          <CategoryList categories={categoryType.find((category) => category.id === parseInt(selectedCategoryTypeId)).categories} />
+        </View>
+      )} */}
+      {/* <View style={{ padding: 16, borderRadius: 8 }}> */}
 
-      <Divider />
-      {/* <div className='p-8 rounded-lg '> */}
       <FilterPrice setFilters={setCategoryFilters} />
-      <Divider />
       <FilterColor
         setFilters={setCategoryFilters}
         ColorFilter={categoryFilters?.color}
       />
-      <Divider />
       <FilterSize
         setFilters={setCategoryFilters}
         Sizefilter={categoryFilters?.size}
       />
-      {/* </div> */}
-    </div>
+      {/* </View> */}
+    </View>
   );
 }
+
+

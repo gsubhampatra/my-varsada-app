@@ -1,10 +1,50 @@
-import { FilterIcon } from '../../../assets/icons';
-import { useProductFilter } from '../../../context/ProductFiltersContext';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { FilterIcon } from "../../../assets/icons";
+import { useProductFilter } from "../../../context/ProductFiltersContext";
 
 type Props = {
   isShowFilters: boolean;
   setIsShowFilters: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+  },
+  filterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filterButtonText: {
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  clearAllButton: {
+    fontSize: 16,
+    color: "#1890ff",
+  },
+  selectedFiltersContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+  },
+  selectedFilter: {
+    backgroundColor: "#1890ff",
+    padding: 8,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  selectedFilterText: {
+    color: "white",
+    fontSize: 12,
+  },
+});
 
 export default function ProductListFilterHeader({
   isShowFilters,
@@ -13,43 +53,18 @@ export default function ProductListFilterHeader({
   const { setProductFilters } = useProductFilter();
 
   return (
-    <div className="grid grid-cols-[30%_70%] my-4 gap-8">
-      <div className="flex justify-between">
-        <button
-          className="flex justify-center items-center gap-2"
-          onClick={() => setIsShowFilters(!isShowFilters)}
-        >
-          <i>
-            <FilterIcon />
-          </i>
-          <h4>{isShowFilters ? 'Hide Filters' : 'Show Filters'}</h4>
-        </button>
-        {isShowFilters ? (
-          <button
-            className="text-[20px] leading-6 text-secondary font-bold"
-            onClick={() => setProductFilters(undefined)}
-          >
-            Clear All
-          </button>
-        ) : null}
-      </div>
-
-      {/* {isShowFilters ? (
-        <div className="flex gap-4">
-          <div className="bg-secondary py-2 px-4 flex gap-4 caption text-white rounded-full">
-            <p>Crop Top</p>
-            <button>x</button>
-          </div>
-          <div className="bg-secondary py-2 px-4 flex gap-4 caption text-white rounded-full">
-            <p>Denim</p>
-            <button>x</button>
-          </div>
-          <div className="bg-secondary py-2 px-4 flex gap-4 caption text-white rounded-full">
-            <p>Casual</p>
-            <button>x</button>
-          </div>
-        </div>
-      ) : null} */}
-    </div>
+    <View style={styles.container}>
+      <View style={styles.filterButton}>
+        <FilterIcon />
+        <Text style={styles.filterButtonText}>
+          {isShowFilters ? "Hide Filters" : "Show Filters"}
+        </Text>
+      </View>
+      {isShowFilters ? (
+        <TouchableOpacity onPress={() => setProductFilters(undefined)}>
+          <Text style={styles.clearAllButton}>Clear All</Text>
+        </TouchableOpacity>
+      ) : null}
+    </View>
   );
 }

@@ -78,7 +78,7 @@ export default function ProductDesc({ productId }: ProductDescProps) {
 
   const [product, size, color] = results;
 
-  if (product.isError) return <Text>Error loading categories.</Text>;
+  // if (product.isError) return <Text>Error loading categories.</Text>;
   if (product.data) {
     payload.productId = productId;
   }
@@ -87,15 +87,7 @@ export default function ProductDesc({ productId }: ProductDescProps) {
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.imageContainer}>
-          {product.isLoading || size.isLoading ? (
-            <SkeletonComponent />
-          ) : color && selectedColorId ? (
             <ProductImages />
-          ) : (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#C473FF" />
-            </View>
-          )}
         </View>
         <ProductInformation
           product={product}

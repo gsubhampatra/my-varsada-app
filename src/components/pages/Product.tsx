@@ -3,6 +3,7 @@ import SimilarProduct from "../ui/ProductDescription/SimilarProduct";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, Text, View } from "react-native";
+import Navbar from "../Nav";
 
 export default function Product() {
   const { productId } = useLocalSearchParams();
@@ -12,6 +13,7 @@ export default function Product() {
     <SafeAreaView>
       {productIdState ? (
         <View>
+          <Navbar navText="Product" navColor="white" openDrawer={() => {}} />
           <View style={{ flex: 1, minHeight: "100%" }}>
             <ProductDesc productId={productIdState} />
           </View>

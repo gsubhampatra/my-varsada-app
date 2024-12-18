@@ -31,7 +31,7 @@ const LoginScreen = () => {
         style={styles.backgroundImage}
       />
       <View style={styles.container}>
-        <Navbar openDrawer={openDrawer} />
+        <Navbar navText="Login" navColor="white" openDrawer={openDrawer} />
         <SideDrawer isVisible={isDrawerOpen} onClose={closeDrawer}>
           <Text>SideDrawer</Text>
         </SideDrawer>

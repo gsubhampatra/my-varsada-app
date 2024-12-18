@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import SearchBar from "@/src/components/SearchBar";
 import Carousel from "@/src/components/ui/Home/Carousel";
@@ -12,7 +12,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <SearchBar placeholder="Search" value="" onChangeText={() => {}} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Carousel interval={3000} />
+        <Carousel />
         <Category />
         <Trending />
         <OfferBanner />

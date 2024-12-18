@@ -1,3 +1,4 @@
+// ProductHeading.tsx
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,18 +17,18 @@ export default function ProductHeading({ text }: { text?: string }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 16,
-  },
-  heading: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  iconsContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
+    container: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginVertical: 16,
+    },
+    heading: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    iconsContainer: {
+        flexDirection: "row",
+        gap: 8,
+    },
 });
