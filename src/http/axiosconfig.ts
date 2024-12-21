@@ -5,11 +5,5 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// async function apiGet(url:string) {
-//   const res = await fetch(url, {
-//     credentials: 'include'
-
-//   });
-// }
 
 export default api;

@@ -38,7 +38,7 @@ export default function ProductCard2({
   id: number;
 }) {
   return (
-    <Link href={`/product?productId=${id}`}>
+    <Link href={`/product/productId=${id}`}>
       <View style={styles.container}>
         <Image source={{ uri: img }} style={styles.image} />
         <View style={styles.textContainer}>

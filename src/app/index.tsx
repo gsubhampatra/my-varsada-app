@@ -15,7 +15,7 @@ const Index = () => {
         <Link style={indexStyle.button} href="/home">
           Home
         </Link>
-        <Link style={indexStyle.button} href="/product">
+        <Link style={indexStyle.button} href="/product/[productId]">
           Product
         </Link>
       </View>

@@ -1,7 +1,13 @@
-import { Alert } from 'antd';
 
-export default function CoinsReedemed() {
+import { View, Text } from 'react-native'
+import React from 'react'
+
+const CoinsReedemed = () => {
   return (
-    <Alert type="error" showIcon message="No Coin Redeem Information Found" />
-  );
+    <View>
+      <Text>CoinsReedemed</Text>
+    </View>
+  )
 }
+
+export default CoinsReedemed

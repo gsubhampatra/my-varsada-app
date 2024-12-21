@@ -1,7 +1,12 @@
-import { Alert } from 'antd';
+import { View, Text } from 'react-native'
+import React from 'react'
 
-export default function CoinCredited() {
+const CoinCredited = () => {
   return (
-    <Alert type="error" showIcon message="No Coin Credit Information Found" />
-  );
+    <View>
+      <Text>CoinCredited</Text>
+    </View>
+  )
 }
+
+export default CoinCredited

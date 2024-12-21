@@ -1,11 +1,11 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 import {
   Address,
   AddressAndContactsData,
   CheckoutCalculate,
   Contact,
   ProductWithImageData,
-} from '../types/ResponceTypes';
+} from "../types/ResponceTypes";
 
 interface UserState {
   isLogedIn: boolean;
@@ -68,10 +68,20 @@ interface CategoryTypeState {
   setIsLoading: (val: boolean) => void;
 }
 
-interface AppState {
-  isMobile: boolean;
-  setIsMobile: (value: boolean) => void;
+interface Slide {
+  image: string;
+  link: string;
 }
+
+interface BannerState {
+  slides: Slide[] | null;
+  setSlides: (val: Slide[]) => void;
+}
+
+export const useBannerStore = create<BannerState>((set) => ({
+  slides: null,
+  setSlides: (val) => set(() => ({ slides: val })),
+}));
 
 export const useUserStore = create<UserState>((set) => ({
   isLogedIn: false,
@@ -83,9 +93,9 @@ export const useUserStore = create<UserState>((set) => ({
 }));
 
 export const useProductStore = create<ProductState>((set) => ({
-  selectedSize: '',
+  selectedSize: "",
   setSelectedSize: (val) => set(() => ({ selectedSize: val })),
-  selectedColorId: '',
+  selectedColorId: "",
   setSelectedColorId: (val) => set(() => ({ selectedColorId: val })),
 }));
 
@@ -97,7 +107,7 @@ export const useCheckoutCalculateStore = create<CheckoutCalculateState>(
 );
 
 export const useCouponBoxStore = create<CouponBoxState>((set) => ({
-  coupon: '',
+  coupon: "",
   setCoupon: (val) => set(() => ({ coupon: val })),
   isCoinRedeemed: false,
   setIsCoinRedeemed: (val) => set(() => ({ isCoinRedeemed: val })),
@@ -122,7 +132,7 @@ export const useAddressAndContactStore = create<AddressAndContactState>(
     selectedContactAndAddress: null,
     setSelectedContactAndAddress: (val) =>
       set(() => ({ selectedContactAndAddress: val })),
-    addedNewAddress: '',
+    addedNewAddress: "",
     setAddedNewAddress: (val) => set(() => ({ addedNewAddress: val })),
   })
 );
@@ -133,9 +143,4 @@ export const useCategoryTypeStore = create<CategoryTypeState>((set) => ({
     set(() => ({ productForCategoryType: val })),
   isLoading: false,
   setIsLoading: (val) => set(() => ({ isLoading: val })),
-}));
-
-export const useAppStore = create<AppState>((set) => ({
-  isMobile: window.innerWidth <= 600, // Initial value based on screen width
-  setIsMobile: (value) => set({ isMobile: value }),
 }));

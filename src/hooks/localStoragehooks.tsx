@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type StorageListName = "dreamList" | "cart";
@@ -19,7 +19,7 @@ const useAsyncStorageList = (name: StorageListName) => {
   const [list, setList] = useState<string[]>([]);
 
   // useEffect to update state from the AsyncStorage on component mount
-  useState(() => {
+  useEffect(() => {
     const fetchList = async () => {
       const storedList = await getList();
       setList(storedList);

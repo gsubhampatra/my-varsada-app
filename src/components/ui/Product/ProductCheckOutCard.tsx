@@ -1,183 +1,248 @@
-import React from 'react';
-import { View, Image, Text, StyleSheet, Pressable } from 'react-native';
+import { GColors } from "@/src/constants/GStyles";
+import { useProductDescriptionContext } from "@/src/context/ProductDescriptionContext";
+import { useToast } from "@/src/hooks/AntdMessageHooks";
+import { postVarsadaBag } from "@/src/hooks/mutations";
+import { useBagStore } from "@/src/store/useStore";
+import { useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-export default function ProductCheckOutCard({
-  img = '',
-  selectedSize = 'S',
-  title = 'title',
-  quantity = 1,
-  color = 'Black',
-  price = 1950,
-  sizes = ['S', 'M', 'L'],
-}) {
-  const [stateQuantity, setStateQuantity] = React.useState(quantity);
-  const [sizeState, setSizeState] = React.useState(selectedSize);
+interface ProductCheckOutCardProps {
+  img: string;
+  selectedSize: string;
+  title: string;
+  quantity?: number;
+  color: string;
+  price: number;
+  sizes: string[];
+  productId: number;
+  colorId: string;
+}
+
+const ProductCheckOutCard: React.FC<ProductCheckOutCardProps> = ({
+  img,
+  selectedSize,
+  title,
+  color,
+  price,
+  sizes,
+  productId,
+  colorId,
+}) => {
+  const { setSelectedSize, setSelectedColorId } =
+    useProductDescriptionContext();
+  const { success, error, warning } = useToast();
+  const { selectedBagIdsStore, setSelectedBagIdsStore } = useBagStore();
+  const [isAddTBagLoading, setIsAddTBagLoading] = useState(false);
+
+  //mutation for adding to bag
+  const { mutate: addTObag } = useMutation({
+    mutationFn: postVarsadaBag,
+    onSuccess: () => {
+      success("Added to bag");
+      setIsAddTBagLoading(false);
+    },
+    onError: () => {
+      error("Failed to add in bag.");
+      setIsAddTBagLoading(false);
+    },
+  });
+
+  const addToBagHandler = async () => {
+    setIsAddTBagLoading(true);
+    addTObag({
+      productId: `${productId}`,
+      selectedSizeId: selectedSize,
+      selectedColorId: colorId,
+      quantity: 1,
+    });
+    if (productId) {
+      setSelectedBagIdsStore([...selectedBagIdsStore, `${productId}`]);
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.cardContainer}>
+      <TouchableOpacity
+        style={styles.checkboxContainer}
+        onPress={addToBagHandler}
+      >
+        <View>
+          <View
+            style={[
+              styles.checkboxBase,
+              // selectedBagIdsStore.includes(`${productId}`)
+            ]}
+          >
+            {selectedBagIdsStore.includes(`${productId}`) && (
+              <View style={styles.checkboxInner} />
+            )}
+          </View>
+        </View>
+      </TouchableOpacity>
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: img }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <View style={styles.imageOverlay}>
-          <Text style={styles.imageOverlayText}>4.5 (19)</Text>
+        <Image source={{ uri: img }} style={styles.image} resizeMode="cover" />
+        {/* Offer Badge */}
+        <View style={styles.offerBadge}>
+          <Text style={styles.offerText}>45% OFF</Text>
         </View>
+        {/* Heart Icon (replace with your heart icon component) */}
+        <TouchableOpacity style={styles.heartIconContainer}>
+          <Text style={styles.heartIcon}>♥</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.infoContainer}>
+
+      {/* Product details */}
+      <View style={styles.detailsContainer}>
         <Text style={styles.title}>{title}</Text>
-
-        <Text style={styles.color}>Color: {color}</Text>
-
-        <Text style={styles.price}>${price}</Text>
-
-        <Text style={styles.size}>Size</Text>
-        <View style={styles.sizeButtonContainer}>
-          {sizes.map((size) => (
-            <Pressable
-              key={size}
-              style={{
-                ...styles.sizeButton,
-                backgroundColor: sizeState === size ? '#1E293B' : '#D1D5DB',
-              }}
-              onPress={() => setSizeState(size)}
-            >
-              <Text style={styles.sizeButtonText}>{size}</Text>
-            </Pressable>
-          ))}
+        <Text style={styles.sizeText}>Size: {selectedSize}</Text>
+        <View style={styles.priceContainer}>
+          <Text style={styles.originalPrice}>₹{price * 2.2}</Text>
+          <Text style={styles.discountedPrice}>₹{price}</Text>
         </View>
 
-        <Text style={styles.quantity}>
-          Quantity:
-          <Text style={styles.quantityText}>{stateQuantity}</Text>
-        </Text>
-        {/* <View style={styles.quantityButtonContainer}>
-          <Pressable
-            style={styles.quantityButton}
+        {/* Color and size indicators */}
+        <View style={styles.colorSizeIndicators}>
+          {/* Color indicator (replace with actual color logic) */}
+          {/* Color indicator (replace with actual color logic) */}
+          <TouchableOpacity
+            style={[styles.colorIndicator, { backgroundColor: color }]}
             onPress={() => {
-              if (stateQuantity > 1) setStateQuantity(stateQuantity - 1);
+              setSelectedColorId(colorId);
             }}
-          >
-            <Text style={styles.quantityButtonText}>-</Text>
-          </Pressable>
-          <Text style={styles.quantityText}>{stateQuantity}</Text>
-          <Pressable
-            style={styles.quantityButton}
+          ></TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.colorIndicator, { backgroundColor: color }]}
             onPress={() => {
-              if (stateQuantity < 5) setStateQuantity(stateQuantity + 1);
+              setSelectedColorId(colorId);
             }}
-          >
-            <Text style={styles.quantityButtonText}>+</Text>
-          </Pressable>
-        </View> */}
+          ></TouchableOpacity>
+        </View>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
+  cardContainer: {
+    flexDirection: "row",
     borderRadius: 8,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    padding: 12,
+    marginBottom: 10,
+    width: "100%",
   },
   imageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "relative",
+  },
+  offerBadge: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    backgroundColor: GColors.primary,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 5,
+  },
+  offerText: {
+    color: "white",
+    fontSize: 10,
+  },
+  heartIconContainer: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    padding: 5,
+    borderRadius: 20,
+  },
+  heartIcon: {
+    fontSize: 15,
+    color: "black",
   },
   image: {
-    width: '100%',
-    height: 150,
-    resizeMode: 'cover',
+    width: 120,
+    height: 120,
     borderRadius: 8,
   },
-  imageOverlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  imageOverlayText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  infoContainer: {
+  detailsContainer: {
+    marginLeft: 12,
     flex: 1,
-    padding: 16,
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontWeight: "bold",
+    color: GColors.grey,
   },
-  color: {
+  sizeText: {
+    color: GColors.grey,
+    fontSize: 12,
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: "#555",
+    textDecorationLine: "line-through",
+    marginRight: 4,
+  },
+  discountedPrice: {
     fontSize: 14,
-    marginBottom: 8,
+    fontWeight: "bold",
+    color: GColors.white,
   },
-  price: {
-    fontSize: 16,
-    marginBottom: 8,
+
+  colorSizeIndicators: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  size: {
-    fontSize: 14,
-    marginBottom: 8,
+  colorIndicator: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    marginRight: 5,
+    borderColor: GColors.white,
+    borderWidth: 1,
   },
-  sizeButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
+  sizeIndicator: {
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 5,
+    marginRight: 5,
+    borderColor: GColors.grey,
+    borderWidth: 1,
   },
-  sizeButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#1E293B',
-    justifyContent: 'center',
-    alignItems: 'center',
+  selectedSizeIndicator: {
+    backgroundColor: GColors.grey,
   },
-  sizeButtonText: {
-    fontSize: 14,
-    color: '#fff',
+  selectedSizeText: {
+    color: GColors.white,
   },
-  quantity: {
-    fontSize: 14,
-    marginBottom: 8,
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  quantityText: {
-    fontSize: 16,
+  checkboxBase: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderColor: GColors.primary,
+    borderWidth: 1,
+    marginRight: 5,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  quantityButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  checkboxChecked: {
+    backgroundColor: GColors.primary,
   },
-  quantityButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: '#D1D5DB',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  quantityButtonText: {
-    fontSize: 16,
-    color: '#1E293B',
+  checkboxInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: GColors.white,
   },
 });
 
+export default ProductCheckOutCard;

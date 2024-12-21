@@ -1,14 +1,21 @@
 // CategoryScreen.tsx
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import { GColors, Gstyles } from "../../constants/GStyles";
 import Navbar from "@/src/components/Nav";
 import ProductCard1 from "@/src/components/ui/Product/ProductCard1";
 import CategoryList from "@/src/components/category/CategoryList";
+import { API_ROUTES } from "@/src/kv";
+import api from "@/src/http/axiosconfig";
+import { CategoryTypeData } from "@/src/types/ResponceTypes";
+import { useSearchParams } from "expo-router/build/hooks";
+import { useCategoryFilter } from "@/src/context/CategoryFiltersContext";
+import { useQuery } from "@tanstack/react-query";
+
+async function getCategories(): Promise<CategoryTypeData> {
+  const res = await api.get(API_ROUTES.CATEGORY_TYPE.GET_ALL);
+  return res.data;
+}
 
 interface Product {
   id: number;
@@ -18,8 +25,74 @@ interface Product {
   discount?: number;
 }
 
+const data = {
+  categoryType: [
+    {
+      id: 1,
+      type_name: "Bikini",
+      thumbnail:
+        "https://varsada.com/wp-content/uploads/2024/11/AKS9583-scaled.jpg",
+      categories: [
+        {
+          id: 1,
+          category_name: "Bikini",
+        },
+      ],
+    },
+    {
+      id: 2,
+      type_name: "Denim",
+      thumbnail:
+        "https://varsada.com/wp-content/uploads/2024/11/AKS9684-scaled.jpg",
+      categories: [
+        {
+          id: 2,
+          category_name: "Denim",
+        },
+      ],
+    },
+    {
+      id: 3,
+      type_name: "Party",
+      thumbnail:
+        "https://varsada.com/wp-content/uploads/2024/11/AKS9748-scaled.jpg",
+      categories: [
+        {
+          id: 3,
+          category_name: "Party",
+        },
+      ],
+    },
+    {
+      id: 4,
+      type_name: "Active Wear",
+      thumbnail:
+        "https://varsada.com/wp-content/uploads/2024/11/AKS9781-scaled.jpg",
+      categories: [
+        {
+          id: 4,
+          category_name: "Active Wear",
+        },
+      ],
+    },
+  ],
+};
+
 const CategoryScreen = () => {
-  const products: Product[] = [
+  // const [searchParams] = useSearchParams();
+  // const categoryTypeId = searchParams.get('categoryTypeId');
+  // const { setCategoryFilters } = useCategoryFilter();
+const categoryTypeId = 1;
+  // const { data } = useQuery<CategoryTypeData>({
+  //   queryKey: ['category'],
+  //   queryFn: getCategories,
+  //   onSuccess(data) {
+  //     console.log(data);
+  //   },
+  // });
+
+
+  const productsdata: Product[] = [
     {
       id: 1,
       name: "Product 1",
@@ -64,6 +137,7 @@ const CategoryScreen = () => {
     },
   ];
 
+
   return (
     <View style={Gstyles.container}>
       <Navbar
@@ -72,20 +146,23 @@ const CategoryScreen = () => {
         openDrawer={() => {}}
       />
       <View style={styles.container}>
-        <CategoryList />
+        <CategoryList
+          seletctedCategorytypeId={categoryTypeId}
+          categoryType={data.categoryType}
+        />
         <View style={styles.productContainer}>
           <ScrollView>
             <View style={styles.grid}>
-            {products.map((product) => (
-              <ProductCard1
-                key={product.id}
-                productId={product.id}
-                product_name={product.name}
-                price={parseInt(product.price)}
-                img={product.img}
-                discount={product.discount}
-              />
-            ))}
+              {productsdata.map((product) => (
+                <ProductCard1
+                  key={product.id}
+                  productId={product.id}
+                  product_name={product.name}
+                  price={parseInt(product.price)}
+                  img={product.img}
+                  discount={product.discount}
+                />
+              ))}
             </View>
           </ScrollView>
         </View>

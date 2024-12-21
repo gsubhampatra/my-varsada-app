@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
-import api from '../http/axiosconfig';
-import { API_ROUTES } from '../kv';
-import { VarsadaBagPayload } from '../types/productTypes';
+import { useMutation } from "@tanstack/react-query";
+import api from "../http/axiosconfig";
+import { API_ROUTES } from "../kv";
+import { VarsadaBagPayload } from "../types/productTypes";
 
 //--
 async function postUserData(data: {
@@ -20,9 +20,7 @@ async function postUserData(data: {
 export function usePostUserData() {
   return useMutation(postUserData);
 }
-//--
 
-//--
 export async function postVarsadaBag(data: VarsadaBagPayload) {
   const response = await api.post(API_ROUTES.USER.ADD_TO_BAG, data);
   console.log(response.data);

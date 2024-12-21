@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from 'react';
-import { Filter } from '../types/productTypes';
+import React, { createContext, useContext, useState } from "react";
+import { Filter } from "../types/productTypes";
 
 // Context for Category
 const CategoryFilterContext = createContext<{
@@ -27,7 +27,7 @@ export const useCategoryFilter = () => {
   const context = useContext(CategoryFilterContext);
   if (!context) {
     throw new Error(
-      'useCategoryFilter must be used within a CategoryFilterProvider'
+      "useCategoryFilter must be used within a CategoryFilterProvider"
     );
   }
   return context;

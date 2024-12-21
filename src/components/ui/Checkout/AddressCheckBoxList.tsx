@@ -1,17 +1,72 @@
-import { useAddressAndContactStore } from '../../../store/useStore';
-import { API_ROUTES } from '../../../kv';
-import api from '../../../http/axiosconfig';
-import { Address, Contact } from '../../../types/ResponceTypes';
-import { useMutation } from '@tanstack/react-query';
-import { Checkbox } from 'antd';
-import EmptyBox from '../Layout/Empty/EmptyBox';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { useAddressAndContactStore } from "../../../store/useStore"; // You'll need to create a RN version of this store
+import {
+  Address,
+  Contact,
+  AddressAndContactsData,
+} from "../../../types/ResponceTypes"; // Adjust if needed
+import EmptyBox from "../Layout/Empty/EmptyBox"; // You'll need a RN version of this
 
-async function updateDefaultAddress(addressId: number) {
-  const res = await api.post(API_ROUTES.USER.ADDRESS.UPDATE_DEFAULT_ADDRESS, {
-    addressId,
-  });
-  return res.data;
-}
+// Define Types (example, modify as needed)
+const sampleAddressData: AddressAndContactsData = {
+  status: true,
+  contact: [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john.doe@example.com",
+      phone: "123-456-7890",
+      Address: [
+        {
+          id: 101,
+          address: "123 Main St",
+          locality: "Downtown",
+          postal_code: "12345",
+          city: "Anytown",
+          state: "CA",
+          country: "USA",
+          isDefault: true,
+        },
+        {
+          id: 102,
+          address: "456 Oak Ave",
+          locality: "Suburb",
+          postal_code: "67890",
+          city: "Otherville",
+          state: "NY",
+          country: "USA",
+          isDefault: false,
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      email: "jane.smith@example.com",
+      phone: "987-654-3210",
+      Address: [
+        {
+          id: 201,
+          address: "789 Pine Ln",
+          locality: "Uptown",
+          postal_code: "54321",
+          city: "Somecity",
+          state: "TX",
+          country: "USA",
+          isDefault: true,
+        },
+      ],
+    },
+  ],
+};
 
 export default function AddressCheckBoxList() {
   const {
@@ -22,18 +77,22 @@ export default function AddressCheckBoxList() {
     setSelectedContactAndAddress,
     setSelectedDefaultAddressId,
     selectedDefaultAddressId,
-  } = useAddressAndContactStore();
+  } = useAddressAndContactStore(); // Replace with the React Native store
 
-  const mutation = useMutation({
-    mutationFn: updateDefaultAddress,
-    onSuccess: (data) => {
-      console.log('address changed', data);
-    },
-    onError: (error: { response: { data: { msg: string } } }) => {
-      console.log(error);
-      alert('error setting default address');
-    },
-  });
+  const [data, setData] = useState<AddressAndContactsData | null>(
+    sampleAddressData
+  );
+
+  // const mutation = useMutation({
+  //     mutationFn: updateDefaultAddress,
+  //     onSuccess: (data) => {
+  //         console.log('address changed', data);
+  //     },
+  //     onError: (error: { response: { data: { msg: string } } }) => {
+  //         console.log(error);
+  //         alert('error setting default address');
+  //     },
+  // });
 
   const handleCheckboxChange = (
     checked: boolean,
@@ -52,37 +111,38 @@ export default function AddressCheckBoxList() {
   };
 
   const handleMakeDefault = (addressId: number) => {
-    mutation.mutate(addressId);
+    // mutation.mutate(addressId);
     setSelectedDefaultAddressId(addressId);
+    Alert.alert("Success", "Default Address Changed successfully!");
+    console.log("setting as default address", addressId);
   };
 
-  if (contactsAndAddress?.contact.length == 0)
-    return <EmptyBox text="No Address Found" />;
+  if (data?.contact.length == 0) return <EmptyBox text="No Address Found" />;
 
-  if (contactsAndAddress)
+  if (data)
     return (
-      <>
-        {contactsAndAddress?.contact.map((contact, index) => (
-          <div
-            className={index === 0 ? 'py-4' : 'py-4 border-t-2'}
+      <ScrollView>
+        {data?.contact.map((contact, index) => (
+          <View
+            style={[
+              styles.contactContainer,
+              index === 0 ? styles.firstContact : null,
+            ]}
             key={contact.id}
           >
-            <div className="flex items-center gap-2">
-              <p className="text-lg font-semibold">{contact.name}</p>
-              <span className="text-lg"> | </span>
-              <span className="text-lg">{contact.phone}</span>
-            </div>
+            <View style={styles.contactInfo}>
+              <Text style={styles.contactName}>{contact.name}</Text>
+              <Text style={styles.contactSeparator}> | </Text>
+              <Text style={styles.contactPhone}>{contact.phone}</Text>
+            </View>
             {contact.Address.map((address) => (
-              <div
-                className="flex gap-4 p-4 bg-white rounded-lg m-4 mx-2"
-                key={address.id}
-              >
-                <div>
-                  <Checkbox
+              <View style={styles.addressItem} key={address.id}>
+                <View>
+                  <CustomCheckbox
                     checked={selectedAddressId === address.id}
-                    onChange={(e) =>
+                    onPress={(checked) =>
                       handleCheckboxChange(
-                        e.target.checked,
+                        checked,
                         contact.id,
                         address.id,
                         contact,
@@ -90,31 +150,134 @@ export default function AddressCheckBoxList() {
                       )
                     }
                   />
-                </div>
-                <div className="flex justify-between w-full">
-                  <div>
-                    <p className="text-lg">
-                      {address.address}, {address.locality}, {address.city},{' '}
+                </View>
+                <View style={styles.addressDetails}>
+                  <View>
+                    <Text style={styles.addressText}>
+                      {address.address}, {address.locality}, {address.city},{" "}
                       {address.state}
-                    </p>
-                    <p className="text-lg">{address.postal_code}</p>
-                    <Checkbox
-                      style={{ marginTop: 8 }}
-                      checked={selectedDefaultAddressId === address.id}
-                      onChange={() => handleMakeDefault(address.id)}
+                    </Text>
+                    <Text style={styles.addressText}>
+                      {address.postal_code}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.defaultCheckboxContainer}
+                      onPress={() => handleMakeDefault(address.id)}
                     >
-                      <span className="text-sm">make default address</span>
-                    </Checkbox>
-                  </div>
-                  <div className="flex gap-4 items-start">
-                    <button>edit</button>
-                    <button>delete</button>
-                  </div>
-                </div>
-              </div>
+                      <CustomCheckbox
+                        checked={selectedDefaultAddressId === address.id}
+                      />
+                      <Text style={styles.defaultCheckboxText}>
+                        make default address
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.actionButtons}>
+                    <TouchableOpacity>
+                      <Text style={styles.actionButtonText}>edit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={styles.actionButtonText}>delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
             ))}
-          </div>
+          </View>
         ))}
-      </>
+      </ScrollView>
     );
+  return null;
 }
+
+const CustomCheckbox = ({
+  checked,
+  onPress,
+}: {
+  checked: boolean;
+  onPress?: (checked: boolean) => void;
+}) => (
+  <TouchableOpacity
+    style={[styles.checkboxBase, checked ? styles.checkboxChecked : null]}
+    onPress={() => onPress && onPress(!checked)}
+  >
+    {checked && <View style={styles.checkboxInner} />}
+  </TouchableOpacity>
+);
+const styles = StyleSheet.create({
+  checkboxBase: {
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "gray",
+    borderRadius: 4,
+  },
+  checkboxChecked: {
+    backgroundColor: "#007bff",
+    borderColor: "#007bff",
+  },
+  checkboxInner: {
+    width: 10,
+    height: 10,
+    backgroundColor: "white",
+    borderRadius: 2,
+  },
+  contactContainer: {
+    paddingVertical: 16,
+  },
+  firstContact: {
+    borderTopWidth: 0,
+  },
+  contactInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
+  contactName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  contactSeparator: {
+    fontSize: 16,
+  },
+  contactPhone: {
+    fontSize: 16,
+  },
+  addressItem: {
+    flexDirection: "row",
+    gap: 10,
+    padding: 16,
+    backgroundColor: "white",
+    borderRadius: 8,
+    margin: 8,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  addressDetails: {
+    flex: 1,
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  addressText: {
+    fontSize: 16,
+  },
+  defaultCheckboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    gap: 5,
+  },
+  defaultCheckboxText: {
+    fontSize: 14,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  actionButtonText: {
+    color: "#007bff",
+    fontSize: 16,
+  },
+});

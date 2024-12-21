@@ -1,143 +1,148 @@
 // RelatedProducts.tsx
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { GColors } from "@/src/constants/GStyles";
+import ProductCard1 from "../ui/Product/ProductCard1";
 
-interface RelatedProduct {
-    id: string;
-    image: string;
-    title: string;
-    price: string;
-}
+type ProductCardProps = {
+  img: string;
+  productId: string | number;
+  price: number;
+  product_name: string;
+  discount?: number;
+};
 
-const sampleRelatedProducts: RelatedProduct[] = [
-    {
-        id: '1',
-        image: 'https://i.pinimg.com/564x/f6/a0/1c/f6a01c1a48bbdf78121c26221528dd8e.jpg',
-        title: 'Colored crop top',
-        price: '₹2300.00',
-    },
-    {
-        id: '2',
-        image: 'https://i.pinimg.com/564x/5a/c0/58/5ac0586e2a014e451d4c8949a628c8d0.jpg',
-        title: 'Colored crop top',
-        price: '₹2300.00',
-    },
-    {
-        id: '3',
-        image: 'https://i.pinimg.com/564x/d6/3f/d5/d63fd5c208a0d487b34ab648a154d717.jpg',
-        title: 'Colored crop top',
-        price: '₹2300.00',
-    },
-    {
-        id: '4',
-        image: 'https://i.pinimg.com/564x/f6/a0/1c/f6a01c1a48bbdf78121c26221528dd8e.jpg',
-        title: 'Colored crop top',
-        price: '₹2300.00',
-    },
-    {
-        id: '5',
-        image: 'https://i.pinimg.com/564x/5a/c0/58/5ac0586e2a014e451d4c8949a628c8d0.jpg',
-        title: 'Colored crop top',
-        price: '₹2300.00',
-    },
-     {
-        id: '6',
-        image: 'https://i.pinimg.com/564x/d6/3f/d5/d63fd5c208a0d487b34ab648a154d717.jpg',
-         title: 'Colored crop top',
-         price: '₹2300.00',
-     },
+const sampleRelatedProducts: ProductCardProps[] = [
+  {
+    productId: 1,
+    img:
+      "https://i.pinimg.com/564x/f6/a0/1c/f6a01c1a48bbdf78121c26221528dd8e.jpg",
+    product_name: "Colored crop top",
+    price: 2300.00,
+    discount: 10,
+  },
+  {
+    productId: 2,
+    img:
+      "https://i.pinimg.com/564x/0f/d4/a4/0fd4a4c0cfcf95e7f4f0f4f4f4f4f4f.jpg",
+    product_name: "Striped long sleeve",
+    price: 3000.00,
+    discount: 20,
+  },
+  {
+    productId: 3,
+    img:
+      "https://i.pinimg.com/564x/ac/fe/8d/acfe8d6c6c9f2c7a5a5a5a5a5a5a5a.jpg",
+    product_name: "Floral maxi dress",
+    price: 4000.00,
+    discount: 25,
+  },
+  {
+    productId: 4,
+    img:
+      "https://i.pinimg.com/564x/0f/4f/8f/0f4f8f8f8f8f8f8f8f8f8f8f8f8f8.jpg",
+    product_name: "Denim shorts",
+    price: 2000.00,
+    discount: 15,
+  },
+  {
+    productId: 5,
+    img:
+      "https://i.pinimg.com/564x/3f/5a/6d/3f5a6d6d6d6d6d6d6d6d6d6d6d.jpg",
+    product_name: "Off the shoulder top",
+    price: 2800.00,
+    discount: 12,
+  },
+  {
+    productId: 6,
+    img:
+      "https://i.pinimg.com/564x/1a/b7/5a/1ab75a5a5a5a5a5a5a5a5a5a5a5a.jpg",
+    product_name: "Embroidered jeans",
+    price: 3500.00,
+    discount: 22,
+  },
 ];
 
+
 const RelatedProducts: React.FC = () => {
-    const renderItem = ({ item }: {item: RelatedProduct}) => (
-        <View style={styles.itemContainer}>
-              <View style={styles.imageContainer}>
-                  <Image source={{ uri: item.image }} style={styles.image}/>
-                  <TouchableOpacity style={styles.heartIconContainer}>
-                      <AntDesign
-                            name="hearto"
-                           size={16}
-                          color="white"
-                        />
-                    </TouchableOpacity>
-                  <View style={styles.discountTag}>
-                      <Text style={styles.discountText}>45% OFF</Text>
-                </View>
-              </View>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.price}>{item.price}</Text>
-        </View>
-    );
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Related Products</Text>
       <FlatList
         data={sampleRelatedProducts}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        numColumns={3}
+        renderItem={({ item }) => <ProductCard1 {...item} />}
+        keyExtractor={(item) => item.productId.toString()}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        contentContainerStyle={{ paddingBottom: 10 }}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 20,
-      paddingVertical: 10
-    },
+  container: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
   header: {
-      fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10
-    },
-    itemContainer: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 8
-    },
-    imageContainer:{
-        position: 'relative',
-        width: '100%',
-        height: 100,
-        overflow: 'hidden',
-        borderRadius: 8
-    },
-    image: {
-    width: '100%',
-        height: '100%',
-      resizeMode: 'cover'
-    },
-    heartIconContainer: {
-        position: 'absolute',
-      top: 5,
-      right: 5,
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        borderRadius: 100,
-        padding: 4,
-    },
-   discountTag: {
-        position: 'absolute',
-        top: 5,
-        left: 5,
-        backgroundColor: 'purple',
-        paddingHorizontal: 4,
-        paddingVertical: 2,
-        borderRadius: 2,
-    },
-    discountText: {
-        color: 'white',
-        fontSize: 10,
-        fontWeight: 'bold',
-    },
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  itemContainer: {
+    flex: 1,
+    alignItems: "center",
+    padding: 8,
+  },
+  imageContainer: {
+    position: "relative",
+    width: "100%",
+    height: 100,
+    overflow: "hidden",
+    borderRadius: 8,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  heartIconContainer: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    borderRadius: 100,
+    padding: 4,
+  },
+  discountTag: {
+    position: "absolute",
+    top: 5,
+    left: 5,
+    backgroundColor: GColors.primary,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 2,
+  },
+  discountText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
   title: {
     fontSize: 14,
-      textAlign: 'center'
+    textAlign: "center",
   },
   price: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
