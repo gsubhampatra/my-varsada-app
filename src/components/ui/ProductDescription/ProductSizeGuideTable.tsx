@@ -14,7 +14,29 @@ import {
 
 const { height } = Dimensions.get("window");
 
-const SizeChartModal = ({ sizeData, open, close }) => {
+const sampleSizeData = [
+  {
+    size: "S",
+    ProductSizeMeasurement: [
+      { measurementType: { measurement_name: "chest" }, value: "34" },
+      { measurementType: { measurement_name: "waist" }, value: "28" },
+      { measurementType: { measurement_name: "hip" }, value: "36" },
+      { measurementType: { measurement_name: "length" }, value: "25" },
+    ],
+  },
+  {
+    size: "M",
+    ProductSizeMeasurement: [
+      { measurementType: { measurement_name: "chest" }, value: "36" },
+      { measurementType: { measurement_name: "waist" }, value: "30" },
+      { measurementType: { measurement_name: "hip" }, value: "38" },
+      { measurementType: { measurement_name: "length" }, value: "26" },
+    ],
+  },
+  // Add more sample data if needed
+];
+
+const SizeChartModal = ({ sizeData = sampleSizeData, open, close }) => {
   const [modalVisible, setModalVisible] = useState(open);
   const [unit, setUnit] = useState("Inches");
   const slideAnim = React.useRef(new Animated.Value(0)).current;
@@ -31,15 +53,14 @@ const SizeChartModal = ({ sizeData, open, close }) => {
   }, [open]);
 
   const closeModal = () => {
-    close(); // Call the close function passed as prop
+    close();
   };
 
   const translateY = slideAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [height / 2, 0], // Half of the screen height
+    outputRange: [height / 2, 0],
   });
 
-  // Helper function to group measurements by type for each size
   const groupMeasurementsByType = (measurements) => {
     const grouped = {};
     measurements.forEach((measurement) => {
@@ -54,7 +75,7 @@ const SizeChartModal = ({ sizeData, open, close }) => {
 
   return (
     <Modal
-      animationType="none"
+      animationType="slide"
       transparent={true}
       visible={modalVisible}
       onRequestClose={closeModal}

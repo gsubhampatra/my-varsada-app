@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { GColors } from "@/src/constants/GStyles";
+import SizeChartModal from "../ui/ProductDescription/ProductSizeGuideTable";
 
 interface ProductHeadingProps {
   text: string;
@@ -35,8 +36,17 @@ const ProductSize: React.FC<ProductSizeProps> = React.memo(
       [onSizeSelect]
     );
 
+    const [isSizeChartOpen, setIsSizeChartOpen] = useState<boolean>(false);
+
+    const handleOpenSizeChart = useCallback(() => {
+      setIsSizeChartOpen(!isSizeChartOpen);
+    }, [isSizeChartOpen]);
+
     return (
       <View style={styles.sizeContainer}>
+        <SizeChartModal open={isSizeChartOpen} close={handleOpenSizeChart} />
+       
+
         {sizes.map((size) => (
           <TouchableOpacity
             key={size}
@@ -49,6 +59,11 @@ const ProductSize: React.FC<ProductSizeProps> = React.memo(
             <Text style={styles.sizeText}>{size}</Text>
           </TouchableOpacity>
         ))}
+         <TouchableOpacity
+          onPress={handleOpenSizeChart}
+        >
+          <Text style={{ color: GColors.primary }}>Size Chart</Text>
+        </TouchableOpacity>
       </View>
     );
   }
