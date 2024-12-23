@@ -45,8 +45,7 @@ const ProductSize: React.FC<ProductSizeProps> = React.memo(
     return (
       <View style={styles.sizeContainer}>
         <SizeChartModal open={isSizeChartOpen} close={handleOpenSizeChart} />
-       
-
+      
         {sizes.map((size) => (
           <TouchableOpacity
             key={size}

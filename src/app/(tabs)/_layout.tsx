@@ -1,9 +1,9 @@
-import { router, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Entypo, MaterialIcons, Feather } from "@expo/vector-icons";
 import { GColors } from "@/src/constants/GStyles";
-import Navbar from "@/src/components/Nav";
+import PageNav from "@/src/components/common/PageNav";
 
 function TabLayout() {
   return (
@@ -30,6 +30,8 @@ function TabLayout() {
       <Tabs.Screen
         name="category"
         options={{
+          headerShown: true,
+          header: () => <PageNav navText="Categories" />,
           tabBarIcon: ({ color }) => (
             <View style={styles.tabItem}>
               <MaterialIcons name="category" size={24} color={color} />
@@ -44,13 +46,7 @@ function TabLayout() {
         options={{
           tabBarStyle: { display: "none" },
           headerShown: true,
-          header: () => (
-            <Navbar
-              navText="Varsada Bag"
-              navColor={GColors.primary}
-              openDrawer={() => {router.back()}}
-            />
-          ),
+          header: () => <PageNav navText="Checkout" />,
 
           tabBarIcon: ({ color }) => (
             <View style={styles.tabItem}>

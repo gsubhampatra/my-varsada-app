@@ -135,7 +135,7 @@ const OrderList: React.FC = () => {
         <Text style={styles.totalPrice}>{totalAmount.toFixed(2)}</Text>
         <TouchableOpacity
           style={styles.checkoutButton}
-          onPress={() => router.push("/paymentPage")}
+          onPress={() => router.push("/payment")}
         >
           <Text style={styles.checkoutText}>
             Check Out <Text>({1})</Text>

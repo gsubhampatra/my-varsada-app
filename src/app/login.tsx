@@ -9,20 +9,12 @@ import {
   SafeAreaView,
 } from "react-native";
 
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import Navbar from "../components/Nav";
-import SideDrawer from "../components/SideDrawer";
 import { router } from "expo-router";
+import MainNav from "../components/common/MainNav";
 
 const LoginScreen = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const openDrawer = () => {
-    setIsDrawerOpen(true);
-  };
-  const closeDrawer = () => {
-    setIsDrawerOpen(false);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,10 +23,7 @@ const LoginScreen = () => {
         style={styles.backgroundImage}
       />
       <View style={styles.container}>
-        <Navbar navText="Login" navColor="white" openDrawer={openDrawer} />
-        <SideDrawer isVisible={isDrawerOpen} onClose={closeDrawer}>
-          <Text>SideDrawer</Text>
-        </SideDrawer>
+
         <View style={styles.content}>
           <Text style={styles.welcomeText}>Welcome to Varsada !!</Text>
           <Text style={styles.myAccountText}>My Account</Text>
@@ -59,7 +48,8 @@ const LoginScreen = () => {
           <TouchableOpacity style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Log In</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.skipButton}
+          <TouchableOpacity
+            style={styles.skipButton}
             onPress={() => {
               router.navigate("/home");
             }}

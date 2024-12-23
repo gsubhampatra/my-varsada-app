@@ -5,7 +5,7 @@ import ProductSizeBox from "./ProductSizeBox";
 import ProductSizeGuideTable from "./ProductSizeGuideTable";
 import { UseQueryResult } from "@tanstack/react-query";
 import { Size } from "../../../types/ResponceTypes";
-import SideDrawer from "../../../components/SideDrawer";
+import SideDrawer from "../../common/SideDrawer";
 import { payload } from "../../../store/globalVars";
 import SizeChartModal from "./ProductSizeGuideTable";
 

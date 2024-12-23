@@ -2,7 +2,6 @@
 import { View, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import { GColors, Gstyles } from "../../constants/GStyles";
-import Navbar from "@/src/components/Nav";
 import ProductCard1 from "@/src/components/ui/Product/ProductCard1";
 import CategoryList from "@/src/components/category/CategoryList";
 import { API_ROUTES } from "@/src/kv";
@@ -82,7 +81,7 @@ const CategoryScreen = () => {
   // const [searchParams] = useSearchParams();
   // const categoryTypeId = searchParams.get('categoryTypeId');
   // const { setCategoryFilters } = useCategoryFilter();
-const categoryTypeId = 1;
+  const categoryTypeId = 1;
   // const { data } = useQuery<CategoryTypeData>({
   //   queryKey: ['category'],
   //   queryFn: getCategories,
@@ -90,7 +89,6 @@ const categoryTypeId = 1;
   //     console.log(data);
   //   },
   // });
-
 
   const productsdata: Product[] = [
     {
@@ -137,14 +135,8 @@ const categoryTypeId = 1;
     },
   ];
 
-
   return (
     <View style={Gstyles.container}>
-      <Navbar
-        navText="Category"
-        navColor={GColors.primary}
-        openDrawer={() => {}}
-      />
       <View style={styles.container}>
         <CategoryList
           seletctedCategorytypeId={categoryTypeId}

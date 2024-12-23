@@ -1,6 +1,6 @@
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import React from "react";
-import SearchBar from "@/src/components/SearchBar";
+import SearchBar from "@/src/components/ui/Home/SearchBar";
 import Carousel from "@/src/components/ui/Home/Carousel";
 import Category from "@/src/components/ui/Home/CategorySection";
 import Trending from "@/src/components/ui/Home/Trending";

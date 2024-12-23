@@ -8,7 +8,7 @@ import Trending from "../ui/Home/Trending";
 
 import { useUserStore } from "../../store/useStore";
 import { useFocusEffect, router } from "expo-router";
-import SearchBar from "../SearchBar";
+import SearchBar from "../ui/Home/SearchBar";
 
 export default function Home() {
   const { isLogedIn, isLoginSkipped } = useUserStore();
